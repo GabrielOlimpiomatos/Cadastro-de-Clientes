@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
 import model.Cliente;
 
 public class ClienteDAO {
@@ -46,6 +49,7 @@ public class ClienteDAO {
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Não foi possivel comunicar com banco de dados","ERROR",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -71,6 +75,7 @@ public class ClienteDAO {
 			return clientes;
 		}catch(SQLException e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Não foi possivel comunicar com banco de dados","ERROR",JOptionPane.ERROR_MESSAGE);
 		}
 		return clientes;
 	}
@@ -92,6 +97,8 @@ public class ClienteDAO {
 			conexao.close();
 		}catch(SQLException e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Não foi possivel comunicar com banco de dados","ERROR",JOptionPane.ERROR_MESSAGE);
+		
 		}
 	}
 

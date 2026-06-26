@@ -12,6 +12,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import java.awt.Font;
@@ -23,7 +24,9 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+
 import dao.ClienteDAO;
+import model.Arquivos;
 import model.Cliente;
 import model.ClienteTableModel;
 import util.DadosMockados;
@@ -174,78 +177,53 @@ public class TelaCadastro extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Pattern compileNome = Pattern.compile("^[A-Za-z`A-¨y ]+$");
-				Pattern compileEmail = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-				Pattern compileTelefone = Pattern.compile("^\\(\\d{2}\\)\\s?\\d{4,5}-\\d{4}$");
 				
-				Matcher matchNome;
-				Matcher matchEmail;
-				Matcher matchTelefone;
-				
-				String nome = textNome.getText().toString();
-				String email = textEmail.getText().toString();
-				String telefone = textTelefone.getText().toString();
-				String sexo = rdbtnMasculino.isSelected() ? "Masculino" : "Feminino";
+				String nome = textNome.getText().trim();
+				String email = textEmail.getText().trim();
+				String telefone = textTelefone.getText().trim();
 				LocalDate hoje = LocalDate.now();
 				
-
-				matchNome = compileNome.matcher(nome);
-				matchEmail = compileEmail.matcher(email);
-				matchTelefone = compileTelefone.matcher(telefone);
+				if(!validar_campos(nome,telefone,email,rdbtnMasculino,rdbtnFeminino)) {
+					return;
+				}
+				String sexo = rdbtnMasculino.isSelected() ? "Masculino" : "Feminino";
 				
-				if (nome.isBlank() || email.isBlank() || telefone.isBlank() 
-						|| sexo.isBlank()) {
-					JOptionPane.showMessageDialog(TelaCadastro.this, 
-							"Preencha todos os campos", "Alerta", 
-							JOptionPane.WARNING_MESSAGE);
-				}
-				else if(!matchNome.matches()) {
-					JOptionPane.showMessageDialog(TelaCadastro.this, "Formato de nome inválido", "Alerta"
-							,JOptionPane.WARNING_MESSAGE);
-				}else if(!matchEmail.matches()) {
-					JOptionPane.showMessageDialog(TelaCadastro.this, "Formato de email inválido", "Alerta"
-							,JOptionPane.WARNING_MESSAGE);
-				}else if(!matchTelefone.matches()) {
-					JOptionPane.showMessageDialog(TelaCadastro.this, "Formato de telefone inválido", "Alerta"
-							,JOptionPane.WARNING_MESSAGE);
-				}
-				else {
-					Cliente cliente = new Cliente(nome, telefone, email, sexo,hoje);
-					modelo.addCliente(cliente);					
-					dao.inserir(cliente);
-					JOptionPane.showMessageDialog(TelaCadastro.this, 
-							"Cliente adicionado com sucesso!", "Sucesso!", 
-							JOptionPane.INFORMATION_MESSAGE);
-				}
-				textNome.setText("");
-				textTelefone.setText("");
-				textEmail.setText("");
-				buttonGroup.clearSelection();
+				Cliente cliente = new Cliente(nome, telefone, email, sexo,hoje);
+				modelo.addCliente(cliente);					
+				dao.inserir(cliente);
 				
+				JOptionPane.showMessageDialog(TelaCadastro.this, 
+				"Cliente adicionado com sucesso!", "Sucesso!", 
+				JOptionPane.INFORMATION_MESSAGE);
+				
+				limpar_campos(buttonGroup);
 			}
 			
 		});
 		btnSalvar.setBounds(23, 25, 105, 27);
 		panel_1.add(btnSalvar);
 		
+		
+		
 		JButton btnExcluir = new JButton("Excluir");
 		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int indice = table.getSelectedRow();
-				if (indice >= 0) {
-					Cliente cliente = modelo.getCliente(indice);
-					System.out.println(cliente.getId());
-					dao.excluir(cliente.getId());
-					modelo.removerCliente(indice);
-				}else {
+				
+				if (indice < 0) { //indice nao valido
 					JOptionPane.showMessageDialog(TelaCadastro.this, 
-							"Selecione um cliente antes de continuar", "Alerta", 
-							JOptionPane.WARNING_MESSAGE);
+					"Selecione um cliente antes de continuar", "Alerta", 
+					JOptionPane.WARNING_MESSAGE);
+					return;
 				}
 				
-				
+				Cliente cliente = modelo.getCliente(indice);
+				System.out.println(cliente.getId());
+				dao.excluir(cliente.getId());
+				modelo.removerCliente(indice);
 			}
 		});
+		
 		btnExcluir.setBounds(153, 25, 105, 27);
 		panel_1.add(btnExcluir);
 		
@@ -253,10 +231,16 @@ public class TelaCadastro extends JFrame {
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String buscarNome = textBuscar.getText().toString();
-				if (!buscarNome.isBlank()) {
-					int indice = modelo.buscarCliente(buscarNome);
-					table.setRowSelectionInterval(indice, indice);
+				
+				if (buscarNome.isBlank()) { //campo nao preechido
+					JOptionPane.showMessageDialog(TelaCadastro.this, 
+					"Preencha o campo da busca para buscar", "Alerta", 
+					JOptionPane.WARNING_MESSAGE);
+					return;
 				}
+				
+				int indice = modelo.buscarCliente(buscarNome);
+				table.setRowSelectionInterval(indice, indice);
 			}
 		});
 		btnBuscar.setBounds(278, 25, 105, 27);
@@ -292,8 +276,9 @@ public class TelaCadastro extends JFrame {
 				JFileChooser jFileChooser = new JFileChooser();
 				if (jFileChooser.showOpenDialog(TelaCadastro.this) 
 						== JFileChooser.APPROVE_OPTION) {
+					
 					File file = jFileChooser.getSelectedFile();
-					carregarDados(file, modelo);
+					Arquivos.carregarDados(file, modelo);
 						
 				}
 				
@@ -310,7 +295,7 @@ public class TelaCadastro extends JFrame {
 				if (jFileChooser.showSaveDialog(TelaCadastro.this) 
 						== JFileChooser.APPROVE_OPTION) {
 					File file = jFileChooser.getSelectedFile();
-					salvarDados(file, modelo);
+					Arquivos.salvarDados(file, modelo,TelaCadastro.this);
 				}
 				
 			}
@@ -332,19 +317,21 @@ public class TelaCadastro extends JFrame {
 		mntmAtualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int linha = table.getSelectedRow();
-				if (linha < 0) {
+				if (linha < 0) { //indice nao valido
 					JOptionPane.showMessageDialog(TelaCadastro.this, "Selecione um cliente para atualizar!", 
-							"Aviso", JOptionPane.WARNING_MESSAGE);
+					"Aviso", JOptionPane.WARNING_MESSAGE);
 					return;
-				}else {
-					Cliente cliente = modelo.getCliente(linha);
-					TelaAtualizar dialogo = new TelaAtualizar(TelaCadastro.this, cliente);
-					dialogo.setVisible(true);
-					if (dialogo.getClienteEditado() != null) {
-						dao.atualizar(dialogo.getClienteEditado());
-						modelo.atualizarTabela(dao.listar());
-					}
 				}
+				
+				Cliente cliente = modelo.getCliente(linha);
+				TelaAtualizar dialogo = new TelaAtualizar(TelaCadastro.this, cliente);
+				dialogo.setVisible(true);
+				
+				if (dialogo.getClienteEditado() != null) {
+					dao.atualizar(dialogo.getClienteEditado());
+					modelo.atualizarTabela(dao.listar());
+				}
+					
 			}
 		});
 		mnNewMenuEditar.add(mntmAtualizar);
@@ -358,7 +345,7 @@ public class TelaCadastro extends JFrame {
 		JMenuItem mntmExportar = new JMenuItem("Exportar relatório");
 		mntmExportar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				exportarRelatorio(modelo);
+				Arquivos.exportarRelatorio(modelo,TelaCadastro.this);
 			}
 		});
 		mnNewMenu_2.add(mntmExportar);
@@ -366,52 +353,7 @@ public class TelaCadastro extends JFrame {
 		JMenuItem mntmCSV = new JMenuItem("Importar CSV validado");
 		mntmCSV.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser();
-				String caminhoCompleto;
-		        int resultado = fileChooser.showOpenDialog(null);
-		        if (resultado == JFileChooser.APPROVE_OPTION) {
-		            File arquivoSelecionado = fileChooser.getSelectedFile();
-		            caminhoCompleto = arquivoSelecionado.getAbsolutePath();
-		            
-		        }else {
-		        	JOptionPane.showMessageDialog(TelaCadastro.this, "Nao foi possivel obter o endereco");
-		        	return;
-		        }
-		        int padraoAceitado=0;
-		        int padraoRejeitado=0;
-		        try(BufferedReader read = new BufferedReader(new FileReader(caminhoCompleto))){
-		        	read.readLine();
-		        	String linha;
-		        	ArrayList<Cliente> clientes = new ArrayList<Cliente>();
-		        	while((linha = read.readLine()) != null) {
-		        		String partes[] = linha.split(",");
-		        		if(partes.length != 4) {
-		        			JOptionPane.showMessageDialog(TelaCadastro.this, "linha csv fora do padrao");
-		        			padraoRejeitado++;
-		        		}else {
-		        			String nome = partes[0];
-				        	String telefone = partes[1];
-				        	String email = partes[2];
-				        	String sexo = partes[3];
-				        	LocalDate hoje = LocalDate.now();
-				        	Cliente cliente = new Cliente(
-				        			nome,
-				        			telefone,
-				        			email,
-				        			sexo,
-				        			hoje
-				        	);	
-				        	modelo.addCliente(cliente);
-				        	dao.inserir(cliente);
-				        	padraoAceitado++;
-		        		}
-		        	}
-		        }catch(IOException file) {
-		        	JOptionPane.showMessageDialog(TelaCadastro.this, "Nao foi possivel ler o arquivo");
-		        }
-		        System.out.println("Importado com sucesso");
-		        System.out.println("Registros importados: " + padraoAceitado);
-		        System.out.println("Registros rejeitados: " + padraoRejeitado);
+				Arquivos.importar_arquivo_csv(modelo,TelaCadastro.this,dao);
 			}
 		});
 		mnNewMenu_2.add(mntmCSV);
@@ -419,101 +361,47 @@ public class TelaCadastro extends JFrame {
 		JMenu mnNewMenu_3 = new JMenu("Sobre");
 		menuBar.add(mnNewMenu_3);
 	}
-	private void exportarRelatorio(ClienteTableModel modelo) {
-		String caminhoCompleto = "relatorio.txt";
-		try(BufferedWriter arq = new BufferedWriter(new FileWriter(caminhoCompleto))){
-			LocalDate hoje = LocalDate.now();
-			DateTimeFormatter formato =
-					DateTimeFormatter.ofPattern("dd/MM/yyyy");
-			String dataFormatada = hoje.format(formato);
-			
-			arq.write("RELATORIO DE CLIENTES");
-			arq.newLine();
-			arq.write("Total de clientes: "+modelo.getNumCliente());
-			arq.newLine();
-			arq.write("Masculino: " +modelo.getNumHomens());
-			arq.newLine();
-			arq.write("Feminio: "+ modelo.getNumMulheres());
-			arq.newLine();
-			arq.newLine();
-			ArrayList<Cliente> clientes = modelo.getLista();
-			
-			for(Cliente cliente : clientes) {
-				arq.write("------------------------------------");
-				arq.write("\nNome: " + cliente.getNome()+ "\n");
-				arq.write("Telefone: "+ cliente.getTelefone()+ "\n");
-				arq.write("Email: " + cliente.getEmail()+ "\n");
-				arq.write("Sexo: " + cliente.getSexo());
-				arq.write("Data de cadastro: "+ dataFormatada + "\n");
-			}
-			arq.write("------------------------------------");
-			JOptionPane.showMessageDialog(null, "arquivo relatorio criado com sucesso");
-		}catch(IOException e) {
-				e.printStackTrace();
+	private void limpar_campos(ButtonGroup buttonGroup) {
+		textNome.setText("");
+		textTelefone.setText("");
+		textEmail.setText("");
+		buttonGroup.clearSelection();
+	}
+	
+	private boolean validar_botao(JRadioButton F,JRadioButton M) {
+		if(F.isSelected() || M.isSelected()) {
+			return true;
 		}
-}
+		return false;
+	}
 	
-	
-	private void carregarDados(File file, ClienteTableModel modelo) {
-		try {
-			fileReader = new FileReader(file);
-			bufferedReader = new BufferedReader(fileReader);
-			modelo.limparDados();
-			bufferedReader.readLine();
-			String linha = "";
-			while((linha = bufferedReader.readLine()) != null) {
-				String campos [] = linha.split(",");
-				if (campos.length == 4) {
-					String nome = campos[0];
-					String telefone = campos[1];
-					String email = campos[2];
-					String sexo = campos[3];
-					String data = campos[4];
-					LocalDate dataLocal = LocalDate.parse(data);
-					Cliente cliente = new Cliente(nome, telefone, email, sexo,dataLocal);
-					modelo.addCliente(cliente);
-				}
-			}
-		}catch(IOException e) {
-			e.printStackTrace();
-		}finally {
-			try {
-				bufferedReader.close();
-				fileReader.close();				
-			}catch(IOException e) {
-				e.printStackTrace();
-			}
-		}		
+	private boolean validar_campos(String nome, String telefone, 
+			String email,JRadioButton botao_mas,JRadioButton botao_fem) {
 		
+		Pattern compileNome = Pattern.compile("^[a-zA-ZÀ-ÿ ]+$");
+		Pattern compileEmail = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+		Pattern compileTelefone = Pattern.compile("^\\(\\d{2}\\)\\s?\\d{4,5}-\\d{4}$");
+		
+		Matcher matchNome = compileNome.matcher(nome);
+		Matcher matchEmail = compileEmail.matcher(email);
+		Matcher matchTelefone = compileTelefone.matcher(telefone);
+		
+		if (nome.isBlank() || email.isBlank() || telefone.isBlank()
+				|| !validar_botao(botao_mas,botao_fem)) {
+			JOptionPane.showMessageDialog(TelaCadastro.this, 
+					"Preencha todos os campos antes de salvar", "ERRO!", 
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		else if(!matchNome.matches() || !matchEmail.matches() || !matchTelefone.matches()) {
+			JOptionPane.showMessageDialog(TelaCadastro.this, 
+					"Insira os campos corretamente", "ERRO!", 
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		
+		return true;
 	}
 	
 	
-	
-	private void salvarDados(File file, ClienteTableModel modelo) {
-		try {
-			fileWriter = new FileWriter(file);
-			bufferedWriter = new BufferedWriter(fileWriter);
-			bufferedWriter.write("Nome,Telefone,Email,Sexo");
-			bufferedWriter.newLine();
-			for (int i=0; i < modelo.getRowCount(); i++) {
-				String nome = (String) modelo.getValueAt(i, 0);
-				String telefone = (String) modelo.getValueAt(i, 1);
-				String email = (String) modelo.getValueAt(i, 2);
-				String sexo = (String) modelo.getValueAt(i, 3);
-				bufferedWriter.write(nome+","+telefone+","+
-				","+email+","+sexo);
-				bufferedWriter.newLine();
-			}
-		}catch(IOException e) {
-			e.printStackTrace();
-		}finally {
-			try {				
-				bufferedWriter.close();
-				fileWriter.close();
-			}catch(IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
 }
