@@ -7,6 +7,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="lib"/>
-	<classpathentry kind="lib" path="C:/Users/Aluno-Unir.UNIR-26/eclipse-workspace/CadastroCliente/lib/sqlite-jdbc-3.53.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuário/Downloads/CadastroCliente/CadastroCliente/bin/sqlite-jdbc-3.53.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
