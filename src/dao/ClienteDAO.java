@@ -72,11 +72,14 @@ public class ClienteDAO {
 				Cliente cliente = new Cliente(id, nome, telefone, email, sexo,localData);
 				clientes.add(cliente);
 			}
+			stmt.close();
+			conexao.close();
 			return clientes;
 		}catch(SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Não foi possivel comunicar com banco de dados","ERROR",JOptionPane.ERROR_MESSAGE);
 		}
+		
 		return clientes;
 	}
 	
@@ -100,6 +103,77 @@ public class ClienteDAO {
 			JOptionPane.showMessageDialog(null, "Não foi possivel comunicar com banco de dados","ERROR",JOptionPane.ERROR_MESSAGE);
 		
 		}
+	}
+	
+	public ArrayList <Cliente> buscarPorNome(String nome){
+		ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+		String sql = "SELECT * FROM clientes WHERE nome LIKE ?";
+		try {
+			Connection conexao = Conexao.conectar();
+			PreparedStatement stmt = conexao.prepareStatement(sql);
+			stmt.setString(1, "%" + nome + "%");
+			ResultSet resultSet = stmt.executeQuery();
+			while(resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String nome1 = resultSet.getString("nome");
+				String telefone = resultSet.getString("telefone");
+				String email = resultSet.getString("email");
+				String sexo = resultSet.getString("sexo");
+				String data = resultSet.getString("data");
+				LocalDate localData = LocalDate.parse(data);
+				Cliente cliente = new Cliente(id, nome1, telefone, email, sexo,localData);
+				clientes.add(cliente);
+			}
+			stmt.close();
+			conexao.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Conexão com banco de dados falhou");	
+		}
+		if(clientes.size()==0) {
+			JOptionPane.showMessageDialog(null, "Nenhum cliente encontrado");
+			return clientes;
+		}
+		return clientes;
+	}
+	
+	public ArrayList<Cliente> buscaPorPeriodo(LocalDate dataInicial, LocalDate dataFinal){
+		String sql = "SELECT * FROM clientes WHERE data BETWEEN ? AND ?";
+		ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+		
+		try {
+			Connection conexao = Conexao.conectar();
+			PreparedStatement stmt = conexao.prepareStatement(sql);
+	
+			stmt.setString(1, dataInicial.toString());
+			stmt.setString(2, dataFinal.toString());
+			
+			ResultSet resultSet = stmt.executeQuery();
+			while(resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String nome1 = resultSet.getString("nome");
+				String telefone = resultSet.getString("telefone");
+				String email = resultSet.getString("email");
+				String sexo = resultSet.getString("sexo");
+				String data = resultSet.getString("data");
+				LocalDate localData = LocalDate.parse(data);
+				Cliente cliente = new Cliente(id, nome1, telefone, email, sexo,localData);
+				clientes.add(cliente);
+			}
+			stmt.close();
+			conexao.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Conexão com banco de dados falhou");
+		}
+		if(clientes.size()==0) {
+			JOptionPane.showMessageDialog(null, "Nenhum cliente encontrado na busca realizada.");
+		}
+		return clientes;
+		
+		
+		
+		
 	}
 
 }

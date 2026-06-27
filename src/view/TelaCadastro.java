@@ -46,6 +46,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import javax.swing.JSplitPane;
+import javax.swing.JSeparator;
 public class TelaCadastro extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -62,6 +65,8 @@ public class TelaCadastro extends JFrame {
 	private FileReader fileReader;
 	private BufferedReader bufferedReader;
 	private ClienteDAO dao;
+	private JTextField textField_datainicio;
+	private JTextField textField_datafim;
 	
 	
 	
@@ -93,7 +98,7 @@ public class TelaCadastro extends JFrame {
 		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 737, 658);
+		setBounds(100, 100, 948, 659);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 255, 255));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -111,11 +116,11 @@ public class TelaCadastro extends JFrame {
 		
 		JLabel lblNewLabel_1 = new JLabel("CADASTRO DE CLIENTES");
 		lblNewLabel_1.setFont(new Font("Dialog", Font.BOLD, 16));
-		lblNewLabel_1.setBounds(280, 63, 209, 24);
+		lblNewLabel_1.setBounds(404, 64, 209, 24);
 		contentPane.add(lblNewLabel_1);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(23, 127, 690, 158);
+		panel.setBounds(23, 127, 901, 158);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -130,7 +135,7 @@ public class TelaCadastro extends JFrame {
 		textEmail.setColumns(10);
 		
 		textTelefone = new JTextField();
-		textTelefone.setBounds(393, 29, 285, 35);
+		textTelefone.setBounds(575, 29, 285, 35);
 		panel.add(textTelefone);
 		textTelefone.setColumns(10);
 		
@@ -143,12 +148,12 @@ public class TelaCadastro extends JFrame {
 		panel.add(lblNewLabel_3);
 		
 		JLabel lblNewLabel_4 = new JLabel("Telefone");
-		lblNewLabel_4.setBounds(394, 12, 60, 17);
+		lblNewLabel_4.setBounds(575, 12, 60, 17);
 		panel.add(lblNewLabel_4);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(new Color(255, 255, 255));
-		panel_2.setBounds(393, 99, 285, 35);
+		panel_2.setBounds(575, 99, 285, 35);
 		panel.add(panel_2);
 		panel_2.setLayout(null);
 		
@@ -159,7 +164,7 @@ public class TelaCadastro extends JFrame {
 		
 		JRadioButton rdbtnFeminino = new JRadioButton("Feminino");
 		rdbtnFeminino.setBackground(new Color(255, 255, 255));
-		rdbtnFeminino.setBounds(155, 8, 130, 25);
+		rdbtnFeminino.setBounds(149, 8, 130, 25);
 		panel_2.add(rdbtnFeminino);
 		
 		ButtonGroup buttonGroup = new ButtonGroup();
@@ -167,7 +172,7 @@ public class TelaCadastro extends JFrame {
 		buttonGroup.add(rdbtnMasculino);
 		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(23, 299, 690, 77);
+		panel_1.setBounds(23, 295, 691, 77);
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
 		
@@ -239,10 +244,12 @@ public class TelaCadastro extends JFrame {
 					return;
 				}
 				
-				int indice = modelo.buscarCliente(buscarNome);
-				table.setRowSelectionInterval(indice, indice);
+				ArrayList<Cliente> clientes = dao.buscarPorNome(buscarNome);
+				modelo.atualizarTabela(clientes);
 			}
 		});
+	
+		
 		btnBuscar.setBounds(278, 25, 105, 27);
 		panel_1.add(btnBuscar);
 		
@@ -252,7 +259,7 @@ public class TelaCadastro extends JFrame {
 		textBuscar.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(23, 395, 690, 196);
+		scrollPane.setBounds(23, 416, 901, 196);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
@@ -360,6 +367,72 @@ public class TelaCadastro extends JFrame {
 		
 		JMenu mnNewMenu_3 = new JMenu("Sobre");
 		menuBar.add(mnNewMenu_3);
+				
+				JPanel panel_3 = new JPanel();
+				panel_3.setBounds(724, 295, 200, 77);
+				contentPane.add(panel_3);
+				panel_3.setLayout(null);
+				
+				JLabel lblNewLabel_5 = new JLabel("Filtro por data (DD/MM/YYYY)");
+				lblNewLabel_5.setBounds(28, 10, 135, 13);
+				panel_3.add(lblNewLabel_5);
+				
+				
+				
+
+				textField_datainicio = new JTextField();
+				textField_datainicio.setBounds(10, 49, 61, 18);
+				panel_3.add(textField_datainicio);
+				textField_datainicio.setColumns(10);
+				
+						
+						textField_datafim = new JTextField();
+						textField_datafim.setBounds(116, 49, 61, 18);
+						panel_3.add(textField_datafim);
+						textField_datafim.setColumns(10);
+						
+
+						
+						
+						JLabel lblNewLabel_6 = new JLabel("Até:");
+						lblNewLabel_6.setBounds(81, 52, 36, 12);
+						panel_3.add(lblNewLabel_6);
+						
+						JButton btnNewButton = new JButton("Buscar");
+						btnNewButton.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+								if(textField_datainicio.getText().trim().isEmpty()) {
+									JOptionPane.showMessageDialog(null, "Informe a data de início!");
+									return;
+								}
+								if(textField_datainicio.getText().trim().isEmpty()) {
+									JOptionPane.showMessageDialog(null, "Informe a data final!");
+									return;
+								}
+								
+								
+								
+								try {
+									LocalDate dataInicial = LocalDate.parse(textField_datainicio.getText(),formatter);
+									LocalDate dataFinal = LocalDate.parse(textField_datafim.getText(),formatter);
+									
+									if(dataInicial.isAfter(dataFinal)) {
+										JOptionPane.showMessageDialog(null, "A data inicial não pode ser maior que a final");
+										return;
+									}
+									
+									ArrayList<Cliente> clientes = dao.buscaPorPeriodo(dataInicial, dataFinal);
+									modelo.atualizarTabela(clientes);
+								} catch (DateTimeParseException ex) {
+									JOptionPane.showMessageDialog(null, "Digite as datas no formado dia/mês/ano");
+								}
+								
+								
+							}
+						});
+						btnNewButton.setBounds(50, 22, 84, 20);
+						panel_3.add(btnNewButton);
 	}
 	private void limpar_campos(ButtonGroup buttonGroup) {
 		textNome.setText("");
@@ -402,6 +475,4 @@ public class TelaCadastro extends JFrame {
 		
 		return true;
 	}
-	
-	
 }
