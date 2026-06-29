@@ -368,71 +368,71 @@ public class TelaCadastro extends JFrame {
 		JMenu mnNewMenu_3 = new JMenu("Sobre");
 		menuBar.add(mnNewMenu_3);
 				
-				JPanel panel_3 = new JPanel();
-				panel_3.setBounds(724, 295, 200, 77);
-				contentPane.add(panel_3);
-				panel_3.setLayout(null);
-				
-				JLabel lblNewLabel_5 = new JLabel("Filtro por data (DD/MM/YYYY)");
-				lblNewLabel_5.setBounds(28, 10, 135, 13);
-				panel_3.add(lblNewLabel_5);
-				
-				
-				
+		JPanel panel_3 = new JPanel();
+		panel_3.setBounds(724, 295, 200, 77);
+		contentPane.add(panel_3);
+		panel_3.setLayout(null);
+		
+		JLabel lblNewLabel_5 = new JLabel("Filtro por data (DD/MM/YYYY)");
+		lblNewLabel_5.setBounds(28, 10, 135, 13);
+		panel_3.add(lblNewLabel_5);
+		
+		
+		
 
-				textField_datainicio = new JTextField();
-				textField_datainicio.setBounds(10, 49, 61, 18);
-				panel_3.add(textField_datainicio);
-				textField_datainicio.setColumns(10);
+		textField_datainicio = new JTextField();
+		textField_datainicio.setBounds(10, 49, 61, 18);
+		panel_3.add(textField_datainicio);
+		textField_datainicio.setColumns(10);
+		
 				
-						
-						textField_datafim = new JTextField();
-						textField_datafim.setBounds(116, 49, 61, 18);
-						panel_3.add(textField_datafim);
-						textField_datafim.setColumns(10);
-						
+		textField_datafim = new JTextField();
+		textField_datafim.setBounds(116, 49, 61, 18);
+		panel_3.add(textField_datafim);
+		textField_datafim.setColumns(10);
+		
 
-						
-						
-						JLabel lblNewLabel_6 = new JLabel("Até:");
-						lblNewLabel_6.setBounds(81, 52, 36, 12);
-						panel_3.add(lblNewLabel_6);
-						
-						JButton btnNewButton = new JButton("Buscar");
-						btnNewButton.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-								if(textField_datainicio.getText().trim().isEmpty()) {
-									JOptionPane.showMessageDialog(null, "Informe a data de início!");
-									return;
-								}
-								if(textField_datainicio.getText().trim().isEmpty()) {
-									JOptionPane.showMessageDialog(null, "Informe a data final!");
-									return;
-								}
-								
-								
-								
-								try {
-									LocalDate dataInicial = LocalDate.parse(textField_datainicio.getText(),formatter);
-									LocalDate dataFinal = LocalDate.parse(textField_datafim.getText(),formatter);
-									
-									if(dataInicial.isAfter(dataFinal)) {
-										JOptionPane.showMessageDialog(null, "A data inicial não pode ser maior que a final");
-										return;
-									}
-									
-									ArrayList<Cliente> clientes = dao.buscaPorPeriodo(dataInicial, dataFinal);
-									modelo.atualizarTabela(clientes);
-								} catch (DateTimeParseException ex) {
-									JOptionPane.showMessageDialog(null, "Digite as datas no formado dia/mês/ano");
-								}
-								
-								
-							}
-						});
-						btnNewButton.setBounds(50, 22, 84, 20);
-						panel_3.add(btnNewButton);
+		
+		
+		JLabel lblNewLabel_6 = new JLabel("Até:");
+		lblNewLabel_6.setBounds(81, 52, 36, 12);
+		panel_3.add(lblNewLabel_6);
+		
+		JButton btnNewButton = new JButton("Buscar");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				if(textField_datainicio.getText().trim().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Informe a data de início!");
+					return;
+				}
+				if(textField_datainicio.getText().trim().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Informe a data final!");
+					return;
+				}
+				
+				
+				
+				try {
+					LocalDate dataInicial = LocalDate.parse(textField_datainicio.getText(),formatter);
+					LocalDate dataFinal = LocalDate.parse(textField_datafim.getText(),formatter);
+					
+					if(dataInicial.isAfter(dataFinal)) {
+						JOptionPane.showMessageDialog(null, "A data inicial não pode ser maior que a final");
+						return;
+					}
+					
+					ArrayList<Cliente> clientes = dao.buscaPorPeriodo(dataInicial, dataFinal);
+					modelo.atualizarTabela(clientes);
+				} catch (DateTimeParseException ex) {
+					JOptionPane.showMessageDialog(null, "Digite as datas no formado dia/mês/ano");
+				}
+				
+				
+			}
+		});
+		btnNewButton.setBounds(50, 22, 84, 20);
+		panel_3.add(btnNewButton);
 	}
 	private void limpar_campos(ButtonGroup buttonGroup) {
 		textNome.setText("");

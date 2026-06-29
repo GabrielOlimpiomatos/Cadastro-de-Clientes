@@ -1,41 +1,102 @@
 RELATORIO DE CLIENTES
-Total de clientes: 7
-Masculino: 5
-Feminio: 2
+Total de clientes: 16
+Masculino: 11
+Feminio: 5
 
 ------------------------------------
 Nome: Lucas 
 Telefone: (69)99286-2913
-Email: lucas@unir.com
-Sexo: MasculinoData de cadastro: 25/06/2026
+Email: lucasPrz@unir.com
+Sexo: Masculino
+Data de cadastro: 29/06/2026
 ------------------------------------
 Nome: fjsklj
 Telefone: (69)99286-2913
 Email: fdskfj@gmail.com
-Sexo: FemininoData de cadastro: 25/06/2026
+Sexo: Feminino
+Data de cadastro: 29/06/2026
 ------------------------------------
 Nome: dsff
 Telefone: (69)99255-0187
 Email: lucas@gmail.com
-Sexo: MasculinoData de cadastro: 25/06/2026
+Sexo: Masculino
+Data de cadastro: 29/06/2026
 ------------------------------------
-Nome: João Silva
+Nome: João
 Telefone: (11) 98765-4321
 Email: joao.silva@email.com
-Sexo: MasculinoData de cadastro: 25/06/2026
+Sexo: Masculino
+Data de cadastro: 29/06/2026
 ------------------------------------
 Nome: Maria Oliveira
 Telefone: (21) 99876-5432
 Email: maria.oliveira@email.com
-Sexo: FemininoData de cadastro: 25/06/2026
+Sexo: Feminino
+Data de cadastro: 29/06/2026
 ------------------------------------
 Nome: Carlos Santos
 Telefone: (31) 91234-5678
 Email: carlos.santos@email.com
-Sexo: MasculinoData de cadastro: 25/06/2026
+Sexo: Masculino
+Data de cadastro: 29/06/2026
 ------------------------------------
 Nome: Pedro Souza
 Telefone: (51) 97777-6666
 Email: pedro.souza@email.com
-Sexo: MasculinoData de cadastro: 25/06/2026
+Sexo: Masculino
+Data de cadastro: 29/06/2026
+------------------------------------
+Nome: Joao da silva
+Telefone: (69)99286-2934
+Email: joao@email.com
+Sexo: Masculino
+Data de cadastro: 29/06/2026
+------------------------------------
+Nome: Pedro alteida
+Telefone: (60)99286-2343
+Email: pedroalmeida@proton.me
+Sexo: Feminino
+Data de cadastro: 29/06/2026
+------------------------------------
+Nome: Joao carlos
+Telefone: (60)99286-2323
+Email: joao@carlos.com
+Sexo: Masculino
+Data de cadastro: 29/06/2026
+------------------------------------
+Nome: lucas
+Telefone: (69)99255-0187
+Email: lucas@unir.br
+Sexo: Masculino
+Data de cadastro: 29/06/2026
+------------------------------------
+Nome: João Silva
+Telefone: (11) 98765-4321
+Email: joao.silva@email.com
+Sexo: Masculino
+Data de cadastro: 29/06/2026
+------------------------------------
+Nome: Maria Oliveira
+Telefone: (21) 99876-5432
+Email: maria.oliveira@email.com
+Sexo: Feminino
+Data de cadastro: 29/06/2026
+------------------------------------
+Nome: Carlos Santos
+Telefone: (31) 91234-5678
+Email: carlos.santos@email.com
+Sexo: Masculino
+Data de cadastro: 29/06/2026
+------------------------------------
+Nome: Ana Costa
+Telefone: (41) 98888-7777
+Email: ana.costa@email.com
+Sexo: Feminino
+Data de cadastro: 29/06/2026
+------------------------------------
+Nome: Pedro Souza
+Telefone: (51) 97777-6666
+Email: pedro.souza@email.com
+Sexo: Masculino
+Data de cadastro: 29/06/2026
 ------------------------------------
